@@ -63,5 +63,32 @@ namespace WebApplication1.Controllers
             })
             .ToArray();
         }
+
+
+        [HttpGet(Name = "ThrowPasswordToFront")]
+        public string ThrowPassword([FromBody] string query, [FromQuery] string password, [FromBody] int searchIDFromDB)
+        {
+            var key = "RNG"; // hardcode key
+
+            string connectionString = "Server=.\\localhost;Database=TEST_DB;User Id=admin;Password=" + password + ";";
+            SqlConnection connection = new SqlConnection(connectionString);
+
+            SqlCommand command = new SqlCommand(query, connection);
+
+            connection.Open(); // Never closed connection :)
+
+            SqlDataReader reader = command.ExecuteReader();
+
+            var ListOfString = new List<int>();
+            while (reader.Read())
+            {
+                ListOfString.Add(Convert.ToInt32(reader["id"]));
+            }
+
+            ListOfString = ListOfString.Where(x => x == searchIDFromDB).ToList();
+
+
+            return password;
+        }
     }
 }
